@@ -13,9 +13,25 @@ const inter = Inter({
   fallback: ["system-ui"], // ← fallback prevents invisible text
 });
 
+// Metadata for the Smart Inventory System App
 export const metadata: Metadata = {
-  title: "Align Admin Panel",
-  description: "Manage your application easily.",
+  title: "Smart Inventory System", // Main site title
+  description:
+    "A fully functional frontend-only Smart Inventory System built with Next.js, TypeScript, Tailwind CSS, and Shadcn. Manage products, orders, categories, and stock efficiently with a modern dashboard.",
+  keywords: [
+    "Inventory",
+    "Dashboard",
+    "Products",
+    "Orders",
+    "Categories",
+    "Next.js",
+    "TypeScript",
+    "Tailwind CSS",
+    "Shadcn UI",
+    "Frontend-only",
+  ],
+  authors: [{ name: "Mehedi Mehad" }],
+  creator: "Mehedi Mehad",
 };
 
 export default function RootLayout({

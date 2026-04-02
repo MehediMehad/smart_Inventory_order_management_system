@@ -1,9 +1,7 @@
+import ProductManagement from "@/components/modules/dashboard/Projects/ProductManagement";
+
 const page = () => {
-  return (
-    <div>
-      <h1>This is page component</h1>
-    </div>
-  );
+  return <ProductManagement />;
 };
 
 export default page;

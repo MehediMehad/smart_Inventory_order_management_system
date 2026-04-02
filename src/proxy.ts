@@ -38,6 +38,7 @@ const roleBasedPrivateRoutes: Record<Role, string[]> = {
     '/dashboard/products',
     '/dashboard/products/create',
     '/dashboard/products/edit/*',
+    '/dashboard/products/details/*',
     '/dashboard/categories',
     '/dashboard/orders',
     '/dashboard/orders/create',

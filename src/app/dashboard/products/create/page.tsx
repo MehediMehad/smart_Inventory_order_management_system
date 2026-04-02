@@ -1,9 +1,5 @@
-const page = () => {
-  return (
-    <div>
-      <h1>This is page component</h1>
-    </div>
-  );
-};
+import ProductCreateForm from "@/components/modules/dashboard/Projects/ProductCreateForm";
 
-export default page;
+const Page = () => <ProductCreateForm />;
+
+export default Page;

@@ -1,8 +1,10 @@
+import CategoriesManagement from "@/components/modules/dashboard/Categories/CategoriesManagement";
+
 const page = () => {
   return (
-    <div>
-      <h1>This is page component</h1>
-    </div>
+    <>
+      <CategoriesManagement />
+    </>
   );
 };
 

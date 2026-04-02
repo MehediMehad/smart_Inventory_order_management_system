@@ -36,8 +36,6 @@ const roleBasedPrivateRoutes: Record<Role, string[]> = {
     '/reset-password',
     '/dashboard',
     '/dashboard/products',
-    '/dashboard/products/create',
-    '/dashboard/products/edit/*',
     '/dashboard/products/details/*',
     '/dashboard/categories',
     '/dashboard/orders',

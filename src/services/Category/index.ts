@@ -10,6 +10,48 @@ import { TCategory } from "@/types";
 
 const TAG = "categories";
 
+export const createCategory = async (data: TCategoryForm) => {
+    const body = {
+        name: data.name,        // adjust field names based on your actual schema
+        // add other fields if your category has more (e.g., description, slug, etc.)
+    };
+
+    try {
+        const accessToken = (await cookies()).get("accessToken")?.value;
+
+        const response = await serverFetch.post("/category", {
+            body: JSON.stringify(body),
+            headers: {
+                Authorization: `Bearer ${accessToken}`,
+                "Content-Type": "application/json",
+            },
+            next: { tags: [TAG] },
+        });
+
+        if (!response.ok) {
+            const errorData = await response.json().catch(() => ({}));
+            return {
+                success: false,
+                message: errorData.message || "Failed to create category",
+            };
+        }
+
+        const result = await response.json();
+        revalidateTag(TAG, { expire: 0 });   // or just revalidateTag(TAG)
+
+        return {
+            success: true,
+            message: result.message || "Category created successfully",
+            data: result.data,
+        };
+    } catch (error: any) {
+        return {
+            success: false,
+            message: error.message || "Failed to create category",
+        };
+    }
+};
+
 export const getAllCategories = async (): Promise<TCategory[]> => {
     try {
         const response = await serverFetch.get("/category", {

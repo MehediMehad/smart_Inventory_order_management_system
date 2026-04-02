@@ -6,9 +6,25 @@ import { NMTable } from "@/components/shared/core/NMTable";
 import { Plus, Edit, Trash2, Eye } from "lucide-react";
 import Link from "next/link";
 import { toast } from "sonner";
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogHeader,
+  DialogTitle,
+} from "@/components/ui/dialog";
+import { Button } from "@/components/ui/button";
 
 import { getAllCategories, deleteCategory } from "@/services/Category";
+
 import dynamic from "next/dynamic";
+
+// Lazy load components
+const CategoryForm = dynamic(() => import("./CategoryForm"), { ssr: false });
+const DeleteConfirmationModal = dynamic(
+  () => import("@/components/shared/core/NMModal/DeleteConfirmationModal"),
+  { ssr: false },
+);
 
 export interface TCategory {
   id: string;
@@ -20,15 +36,16 @@ export interface TCategory {
   };
 }
 
-// Lazy load Confirm Delete Modal
-const DeleteConfirmationModal = dynamic(
-  () => import("@/components/shared/core/NMModal/DeleteConfirmationModal"),
-  { ssr: false },
-);
-
 const CategoriesManagement = () => {
   const [categories, setCategories] = useState<TCategory[]>([]);
-  const [loading, setLoading] = useState(true); // better default
+  const [loading, setLoading] = useState(true);
+
+  // Modal States
+  const [openCreateCategory, setOpenCreateCategory] = useState(false);
+  const [openEditCategory, setOpenEditCategory] = useState(false);
+  const [selectedCategory, setSelectedCategory] = useState<TCategory | null>(
+    null,
+  );
 
   // Delete Modal State
   const [deleteModal, setDeleteModal] = useState({
@@ -68,10 +85,9 @@ const CategoriesManagement = () => {
 
     try {
       const res = await deleteCategory(deleteModal.categoryId);
-
       if (res?.success) {
         toast.success(res.message || "Category deleted successfully");
-        fetchCategories(); // refresh list
+        fetchCategories(); // Refresh list
       } else {
         toast.error(res?.message || "Failed to delete category");
       }
@@ -79,6 +95,20 @@ const CategoriesManagement = () => {
       toast.error("Something went wrong while deleting the category");
     } finally {
       closeDeleteModal();
+    }
+  };
+
+  // Handle Create / Update Success
+  const onCategoryCreatedOrUpdated = (
+    newOrUpdated: TCategory,
+    isUpdate = false,
+  ) => {
+    if (isUpdate) {
+      setCategories((prev) =>
+        prev.map((cat) => (cat.id === newOrUpdated.id ? newOrUpdated : cat)),
+      );
+    } else {
+      setCategories((prev) => [...prev, newOrUpdated]);
     }
   };
 
@@ -99,18 +129,14 @@ const CategoriesManagement = () => {
       accessorKey: "createdAt",
       header: "Created At",
       cell: ({ row }) => (
-        <div>
-          {new Date(row.original.createdAt).toISOString().split("T")[0]}
-        </div>
+        <div>{new Date(row.original.createdAt).toLocaleDateString()}</div>
       ),
     },
     {
       accessorKey: "updatedAt",
       header: "Updated At",
       cell: ({ row }) => (
-        <div>
-          {new Date(row.original.updatedAt).toISOString().split("T")[0]}
-        </div>
+        <div>{new Date(row.original.updatedAt).toLocaleDateString()}</div>
       ),
     },
     {
@@ -139,13 +165,16 @@ const CategoriesManagement = () => {
             <Plus size={18} />
           </Link>
 
-          <Link
-            href={`/dashboard/categories/edit/${row.original.id}`}
+          <button
+            onClick={() => {
+              setSelectedCategory(row.original);
+              setOpenEditCategory(true);
+            }}
             className="p-2 text-amber-600 hover:bg-amber-50 rounded-md transition-colors"
             title="Edit Category"
           >
             <Edit size={18} />
-          </Link>
+          </button>
 
           <button
             onClick={() => openDeleteModal(row.original.id, row.original.name)}
@@ -166,21 +195,65 @@ const CategoriesManagement = () => {
         <div>
           <h1 className="text-3xl font-semibold">Categories Management</h1>
           <p className="mt-2 text-muted-foreground">
-            Manage your categories create, edit or remove them here
+            Manage your product categories.
           </p>
         </div>
 
-        <Link
-          href="/dashboard/categories/create"
-          className="inline-flex items-center justify-center gap-2 rounded-md bg-primary px-5 py-2.5 text-sm font-medium text-primary-foreground shadow hover:bg-primary/90"
-        >
-          <Plus size={18} />
-          Add New Category
-        </Link>
+        <Button onClick={() => setOpenCreateCategory(true)}>
+          <Plus className="mr-2 h-4 w-4" /> Add New Category
+        </Button>
       </div>
 
       {/* Table */}
       <NMTable columns={columns} data={categories} isLoading={loading} />
+
+      {/* === Modals === */}
+
+      {/* Create Category Modal */}
+      <Dialog open={openCreateCategory} onOpenChange={setOpenCreateCategory}>
+        <DialogContent className="max-w-md">
+          <DialogHeader>
+            <DialogTitle>Add New Category</DialogTitle>
+            <DialogDescription>
+              Create a new category for your products.
+            </DialogDescription>
+          </DialogHeader>
+          <CategoryForm
+            mode="create"
+            onSuccess={(created) => {
+              onCategoryCreatedOrUpdated(created);
+              setOpenCreateCategory(false);
+            }}
+            onCancel={() => setOpenCreateCategory(false)}
+          />
+        </DialogContent>
+      </Dialog>
+
+      {/* Edit Category Modal */}
+      <Dialog open={openEditCategory} onOpenChange={setOpenEditCategory}>
+        <DialogContent className="max-w-md">
+          <DialogHeader>
+            <DialogTitle>Edit Category</DialogTitle>
+            <DialogDescription>Update category information.</DialogDescription>
+          </DialogHeader>
+          {selectedCategory && (
+            <CategoryForm
+              mode="edit"
+              defaultValues={{ name: selectedCategory.name }}
+              categoryId={selectedCategory.id}
+              onSuccess={(updated) => {
+                onCategoryCreatedOrUpdated(updated, true);
+                setOpenEditCategory(false);
+                setSelectedCategory(null);
+              }}
+              onCancel={() => {
+                setOpenEditCategory(false);
+                setSelectedCategory(null);
+              }}
+            />
+          )}
+        </DialogContent>
+      </Dialog>
 
       {/* Delete Confirmation Modal */}
       <DeleteConfirmationModal

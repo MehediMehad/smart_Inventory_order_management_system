@@ -1,4 +1,4 @@
-export interface IUser {
+export interface IAuthUser {
     userId: string;
     name: string;
     email: string;
@@ -41,4 +41,16 @@ export interface TUsers {
     lastLogin: string;
     createdAt: string;
     updatedAt: string;
+}
+
+export interface TUser {
+    id: string
+    name: string
+    email: string
+    phone: string
+    role: string
+    image: string
+    isVerified: boolean
+    status: string
+    createdAt: string
 }

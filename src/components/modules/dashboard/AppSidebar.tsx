@@ -1,7 +1,6 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { LayoutDashboard } from "lucide-react";
 import {
   Sidebar,
   SidebarContent,
@@ -17,14 +16,17 @@ import Link from "next/link";
 import { usePathname } from "next/navigation";
 import clsx from "clsx";
 import { RiAdminLine } from "react-icons/ri";
-import { FaUsersGear } from "react-icons/fa6";
-import { CgGym } from "react-icons/cg";
-import { TbMessageCircleQuestion } from "react-icons/tb";
-import { LuNotebookPen } from "react-icons/lu";
-import { BiShieldQuarter } from "react-icons/bi";
-import { MdOutlineNoMeals } from "react-icons/md";
 import { getCurrentUser } from "@/services/Auth";
-import { BsBook } from "react-icons/bs";
+
+import {
+  LayoutDashboard,
+  Package,
+  Tags,
+  ShoppingCart,
+  RefreshCw,
+  Activity,
+  Settings,
+} from "lucide-react";
 
 type ROLE = "ADMIN" | "General_Admin" | "Moderator";
 type MenuItem = {
@@ -42,45 +44,39 @@ const menuItems: MenuItem[] = [
     accessRole: ["ADMIN"],
   },
   {
-    title: "User Menage",
-    url: "/dashboard/user-menage",
-    icon: FaUsersGear,
+    title: "Products",
+    url: "/dashboard/products",
+    icon: Package,
     accessRole: ["ADMIN"],
   },
   {
-    title: "Workout Menage",
-    url: "/dashboard/workout-menage",
-    icon: CgGym,
+    title: "Categories",
+    url: "/dashboard/categories",
+    icon: Tags,
     accessRole: ["ADMIN"],
   },
   {
-    title: "Meal Cards",
-    url: "/dashboard/meal-cards",
-    icon: MdOutlineNoMeals,
+    title: "Orders",
+    url: "/dashboard/orders",
+    icon: ShoppingCart,
     accessRole: ["ADMIN"],
   },
   {
-    title: "Verse Menage",
-    url: "/dashboard/verse-menage",
-    icon: BsBook,
+    title: "Restock",
+    url: "/dashboard/restock",
+    icon: RefreshCw,
     accessRole: ["ADMIN"],
   },
   {
-    title: "Add FAQ",
-    url: "/dashboard/add-faq",
-    icon: TbMessageCircleQuestion,
+    title: "Activity",
+    url: "/dashboard/activity",
+    icon: Activity,
     accessRole: ["ADMIN"],
   },
   {
-    title: "Privacy Policy",
-    url: "/dashboard/privacy-policy",
-    icon: LuNotebookPen,
-    accessRole: ["ADMIN"],
-  },
-  {
-    title: "Terms of Service",
-    url: "/dashboard/terms-and-service",
-    icon: BiShieldQuarter,
+    title: "Settings",
+    url: "/dashboard/settings",
+    icon: Settings,
     accessRole: ["ADMIN"],
   },
 ];

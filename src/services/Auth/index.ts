@@ -156,7 +156,7 @@ export const getMyProfile = async () => {
       throw new Error("No access token found");
     }
 
-    const res = await fetch(`${config.base_api}/user/profile`, {
+    const res = await fetch(`${config.base_api}/auth/me`, {
       method: "GET",
       headers: {
         Authorization: `Bearer ${accessToken}`,

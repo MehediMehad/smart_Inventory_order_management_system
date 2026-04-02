@@ -1,15 +1,27 @@
-// src/components/modules/dashboard/ProductManagement/ProductManagement.tsx
 "use client";
 
 import { useState, useEffect } from "react";
 import { ColumnDef } from "@tanstack/react-table";
 import { NMTable } from "@/components/shared/core/NMTable";
-import { Plus, Eye, Edit, Trash2 } from "lucide-react";
-import Link from "next/link";
+import { Plus, Edit, Trash2 } from "lucide-react";
 import { toast } from "sonner";
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogHeader,
+  DialogTitle,
+} from "@/components/ui/dialog";
+import { Button } from "@/components/ui/button";
 
 import { getAllProducts, deleteProduct } from "@/services/Product";
 import dynamic from "next/dynamic";
+
+// Lazy load components
+const ProductForm = dynamic(
+  () => import("./ProductForm"), // We'll create one unified form
+  { ssr: false },
+);
 
 const DeleteConfirmationModal = dynamic(
   () => import("@/components/shared/core/NMModal/DeleteConfirmationModal"),
@@ -23,7 +35,8 @@ export interface TProduct {
   stockQuantity: number;
   minStockThreshold: number;
   status: "ACTIVE" | "OUT_OF_STOCK";
-  category: { name: string };
+  category: { name: string; id: string };
+  categoryId: string;
   createdAt: string;
   updatedAt: string;
 }
@@ -32,6 +45,12 @@ const ProductManagement = () => {
   const [products, setProducts] = useState<TProduct[]>([]);
   const [loading, setLoading] = useState(true);
 
+  // Modal States
+  const [openCreateProduct, setOpenCreateProduct] = useState(false);
+  const [openEditProduct, setOpenEditProduct] = useState(false);
+  const [selectedProduct, setSelectedProduct] = useState<TProduct | null>(null);
+
+  // Delete Modal
   const [deleteModal, setDeleteModal] = useState({
     isOpen: false,
     productId: "",
@@ -78,6 +97,20 @@ const ProductManagement = () => {
       toast.error("Something went wrong while deleting the product");
     } finally {
       closeDeleteModal();
+    }
+  };
+
+  // Handle success after create or update
+  const onProductCreatedOrUpdated = (
+    newOrUpdated: TProduct,
+    isUpdate = false,
+  ) => {
+    if (isUpdate) {
+      setProducts((prev) =>
+        prev.map((p) => (p.id === newOrUpdated.id ? newOrUpdated : p)),
+      );
+    } else {
+      setProducts((prev) => [...prev, newOrUpdated]);
     }
   };
 
@@ -129,30 +162,33 @@ const ProductManagement = () => {
         );
       },
     },
-    {
-      id: "details",
-      header: "Details",
-      cell: ({ row }) => (
-        <Link
-          href={`/dashboard/products/details/${row.original.id}`}
-          className="inline-flex items-center justify-center p-2 text-blue-600 hover:bg-blue-50 rounded-md transition-colors"
-        >
-          <Eye size={18} />
-        </Link>
-      ),
-    },
+    // {
+    //   id: "details",
+    //   header: "Details",
+    //   cell: ({ row }) => (
+    //     <Link
+    //       href={`/dashboard/products/details/${row.original.id}`}
+    //       className="inline-flex items-center justify-center p-2 text-blue-600 hover:bg-blue-50 rounded-md transition-colors"
+    //     >
+    //       <Eye size={18} />
+    //     </Link>
+    //   ),
+    // },
     {
       id: "actions",
       header: "Actions",
       cell: ({ row }) => (
         <div className="flex items-center gap-2">
-          <Link
-            href={`/dashboard/products/edit/${row.original.id}`}
+          <button
+            onClick={() => {
+              setSelectedProduct(row.original);
+              setOpenEditProduct(true);
+            }}
             className="p-2 text-amber-600 hover:bg-amber-50 rounded-md transition-colors"
             title="Edit Product"
           >
             <Edit size={18} />
-          </Link>
+          </button>
 
           <button
             onClick={() => openDeleteModal(row.original.id, row.original.name)}
@@ -168,25 +204,79 @@ const ProductManagement = () => {
 
   return (
     <div>
+      {/* Header */}
       <div className="mb-8 flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
         <div>
           <h1 className="text-3xl font-semibold">Product Management</h1>
           <p className="mt-2 text-muted-foreground">
-            Manage your products — create, edit or remove
+            Manage your products create, edit or remove
           </p>
         </div>
 
-        <Link
-          href="/dashboard/products/create"
-          className="inline-flex items-center justify-center gap-2 rounded-md bg-primary px-5 py-2.5 text-sm font-medium text-primary-foreground shadow hover:bg-primary/90"
-        >
-          <Plus size={18} />
-          Add New Product
-        </Link>
+        <Button onClick={() => setOpenCreateProduct(true)}>
+          <Plus className="mr-2 h-4 w-4" /> Add New Product
+        </Button>
       </div>
 
+      {/* Table */}
       <NMTable columns={columns} data={products} isLoading={loading} />
 
+      {/* === Modals === */}
+
+      {/* Create Product Modal */}
+      <Dialog open={openCreateProduct} onOpenChange={setOpenCreateProduct}>
+        <DialogContent className="max-w-3xl max-h-[90vh] overflow-y-auto">
+          <DialogHeader>
+            <DialogTitle>Add New Product</DialogTitle>
+            <DialogDescription>
+              Create a new product for your inventory.
+            </DialogDescription>
+          </DialogHeader>
+          <ProductForm
+            mode="create"
+            onSuccess={(created) => {
+              onProductCreatedOrUpdated(created);
+              setOpenCreateProduct(false);
+            }}
+            onCancel={() => setOpenCreateProduct(false)}
+          />
+        </DialogContent>
+      </Dialog>
+
+      {/* Edit Product Modal */}
+      <Dialog open={openEditProduct} onOpenChange={setOpenEditProduct}>
+        <DialogContent className="max-w-3xl max-h-[90vh] overflow-y-auto">
+          <DialogHeader>
+            <DialogTitle>Edit Product</DialogTitle>
+            <DialogDescription>Update product information.</DialogDescription>
+          </DialogHeader>
+          {selectedProduct && (
+            <ProductForm
+              mode="edit"
+              defaultValues={{
+                name: selectedProduct.name,
+                categoryId: selectedProduct.categoryId,
+                price: selectedProduct.price,
+                stockQuantity: selectedProduct.stockQuantity,
+                minStockThreshold: selectedProduct.minStockThreshold,
+                status: selectedProduct.status,
+              }}
+              productId={selectedProduct.id}
+              onSuccess={(updated) => {
+                onProductCreatedOrUpdated(updated, true);
+                setOpenEditProduct(false);
+                setSelectedProduct(null);
+              }}
+              onCancel={() => {
+                setOpenEditProduct(false);
+                setSelectedProduct(null);
+              }}
+            />
+          )}
+        </DialogContent>
+      </Dialog>
+
+      {/* Delete Confirmation Modal */}
       <DeleteConfirmationModal
         item="Product"
         name={deleteModal.productName}

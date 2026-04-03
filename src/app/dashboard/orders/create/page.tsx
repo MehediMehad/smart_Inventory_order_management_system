@@ -1,7 +1,9 @@
+import OrderCreateForm from "@/components/modules/dashboard/Orders/OrderCreateForm";
+
 const page = () => {
   return (
     <div>
-      <h1>This is page component</h1>
+      <OrderCreateForm />
     </div>
   );
 };

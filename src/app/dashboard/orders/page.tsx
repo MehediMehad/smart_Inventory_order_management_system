@@ -1,9 +1,7 @@
+import OrderManagement from "@/components/modules/dashboard/Orders/OrderManagement";
+
 const page = () => {
-  return (
-    <div>
-      <h1>This is page component</h1>
-    </div>
-  );
+  return <OrderManagement />;
 };
 
 export default page;

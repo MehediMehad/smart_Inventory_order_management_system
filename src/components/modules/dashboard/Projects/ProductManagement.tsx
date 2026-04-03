@@ -16,6 +16,7 @@ import { Button } from "@/components/ui/button";
 
 import { getAllProducts, deleteProduct } from "@/services/Product";
 import dynamic from "next/dynamic";
+import { TProduct } from "@/types";
 
 // Lazy load components
 const ProductForm = dynamic(
@@ -27,19 +28,6 @@ const DeleteConfirmationModal = dynamic(
   () => import("@/components/shared/core/NMModal/DeleteConfirmationModal"),
   { ssr: false },
 );
-
-export interface TProduct {
-  id: string;
-  name: string;
-  price: number;
-  stockQuantity: number;
-  minStockThreshold: number;
-  status: "ACTIVE" | "OUT_OF_STOCK";
-  category: { name: string; id: string };
-  categoryId: string;
-  createdAt: string;
-  updatedAt: string;
-}
 
 const ProductManagement = () => {
   const [products, setProducts] = useState<TProduct[]>([]);
@@ -189,14 +177,14 @@ const ProductManagement = () => {
           >
             <Edit size={18} />
           </button>
-
-          <button
+          {/* TODO: */}
+          {/* <button
             onClick={() => openDeleteModal(row.original.id, row.original.name)}
             className="p-2 text-red-600 hover:bg-red-50 rounded-md transition-colors"
             title="Delete Product"
           >
             <Trash2 size={18} />
-          </button>
+          </button> */}
         </div>
       ),
     },

@@ -27,7 +27,7 @@ export interface TMeta {
     page: number;
     limit: number;
     total: number;
-    totalPage: number;
+    totalPages: number;
     hasNextPage: boolean;
     hasPrevPage: boolean;
 }

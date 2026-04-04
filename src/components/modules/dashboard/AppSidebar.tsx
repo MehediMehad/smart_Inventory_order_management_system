@@ -73,12 +73,12 @@ const menuItems: MenuItem[] = [
     icon: Activity,
     accessRole: ["ADMIN"],
   },
-  {
-    title: "Settings",
-    url: "/dashboard/settings",
-    icon: Settings,
-    accessRole: ["ADMIN"],
-  },
+  // {
+  //   title: "Settings",
+  //   url: "/dashboard/settings",
+  //   icon: Settings,
+  //   accessRole: ["ADMIN"],
+  // },
 ];
 
 const AppSidebar = () => {

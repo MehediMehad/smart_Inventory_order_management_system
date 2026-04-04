@@ -5,7 +5,7 @@ import { User, LogOut, X } from "lucide-react";
 import { SidebarTrigger } from "@/components/ui/sidebar";
 import Image from "next/image";
 import { logout, getMyProfile } from "@/services/Auth";
-import defaultUser from "@/assets/default-user.png";
+// import defaultUser from "@/assets/default-user.png";
 
 const DashboardNavbar = () => {
   const [user, setUser] = useState<{
@@ -34,15 +34,17 @@ const DashboardNavbar = () => {
       <div className="flex items-center gap-3">
         {user ? (
           <>
-            <span className="font-medium text-gray-800">{user.name}</span>
+            <span className="font-medium text-gray-800">
+              Welcome {user.name}
+            </span>
 
-            <Image
+            {/* <Image
               src={user.profileImage || defaultUser}
               alt={user.name || "User"}
               width={32}
               height={32}
               className="rounded-full border border-gray-300"
-            />
+            /> */}
 
             <button
               onClick={() => setShowModal(true)}

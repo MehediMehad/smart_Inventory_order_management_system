@@ -72,7 +72,56 @@ A modern, full-featured web application for managing products, stock levels, cus
 
 **Live URL**: [https://smart-inventory-order-management-sy-omega.vercel.app/](https://smart-inventory-order-management-sy-omega.vercel.app/)
 
-## 📁 Project Structure
+## 📁 Folder Structure
+
+```bash
+Smart-Inventory/
+├── src/
+│   ├── app/                          # Next.js App Router Pages
+│   │   ├── (auth)/                   # Authentication pages
+│   │   ├── (common)/                 # Public pages
+│   │   ├── dashboard/                # Protected Dashboard routes
+│   │   │   ├── activity/
+│   │   │   ├── categories/
+│   │   │   ├── orders/
+│   │   │   ├── products/
+│   │   │   ├── restock/
+│   │   │   └── page.tsx
+│   │   └── layout.tsx
+│   │
+│   ├── components/
+│   │   ├── modules/
+│   │   │   ├── auth/                 # Login, Register, etc.
+│   │   │   └── dashboard/            # All dashboard components
+│   │   │       ├── Dashboard/
+│   │   │       ├── Orders/
+│   │   │       ├── Products/
+│   │   │       ├── Categories/
+│   │   │       ├── Restock/
+│   │   │       └── ActivityLog/
+│   │   └── shared/                   # Reusable UI components
+│   │
+│   ├── services/                     # API service functions
+│   │   ├── Auth/
+│   │   ├── Product/
+│   │   ├── Category/
+│   │   ├── Order/
+│   │   ├── Restock/
+│   │   ├── ActivityLog/
+│   │   └── Dashboard/
+│   │
+│   ├── schemas/                      # Zod validation schemas
+│   ├── types/                        # TypeScript type definitions
+│   ├── context/                      # React Context (UserContext)
+│   ├── lib/                          # Utilities & helpers
+│   └── hooks/                        # Custom React hooks
+│
+├── public/                           # Static assets
+├── assets/                           # Images & logos
+├── .env.local
+├── next.config.mjs
+└── README.md
+```
 
 ## 🛠️ Installation & Setup
 

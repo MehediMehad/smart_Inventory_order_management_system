@@ -116,7 +116,7 @@ export default function OrderDetails({ order }: { order: TOrder }) {
           </div>
         </div>
 
-        <div className="flex gap-3">
+        {/* <div className="flex gap-3">
           <Button variant="outline">
             <Printer className="mr-2 h-4 w-4" />
             Print Invoice
@@ -132,7 +132,7 @@ export default function OrderDetails({ order }: { order: TOrder }) {
               Cancel Order
             </Button>
           )}
-        </div>
+        </div> */}
       </div>
 
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">

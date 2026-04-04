@@ -209,8 +209,6 @@ const ProductManagement = () => {
       {/* Table */}
       <NMTable columns={columns} data={products} isLoading={loading} />
 
-      {/* === Modals === */}
-
       {/* Create Product Modal */}
       <Dialog open={openCreateProduct} onOpenChange={setOpenCreateProduct}>
         <DialogContent className="max-w-3xl max-h-[90vh] overflow-y-auto">

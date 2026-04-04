@@ -1,8 +1,10 @@
+import ActivityLogManagement from "@/components/modules/dashboard/ActivityLog/ActivityLogManagement";
+
 const page = () => {
   return (
-    <div>
-      <h1>This is page component</h1>
-    </div>
+    <>
+      <ActivityLogManagement />
+    </>
   );
 };
 

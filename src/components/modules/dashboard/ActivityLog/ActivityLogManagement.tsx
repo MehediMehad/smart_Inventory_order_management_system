@@ -7,14 +7,73 @@ import { NMTable } from "@/components/shared/core/NMTable";
 import { TablePagination } from "@/components/shared/core/NMTable/TablePagination";
 import { Search, Clock } from "lucide-react";
 import { toast } from "sonner";
+import { formatDistanceToNow } from "date-fns";
 
 import { getAllActivityLogs } from "@/services/ActivityLog";
+
+type ActivityType =
+  | "ORDER_PLACED"
+  | "ORDER_CONFIRMED"
+  | "ORDER_CANCELLED"
+  | "ORDER_SHIPPED"
+  | "ORDER_DELIVERED"
+  | "PRODUCT_ADDED"
+  | "PRODUCT_UPDATED"
+  | "PRODUCT_DELETED"
+  | "RESTOCK_PRODUCT"
+  | "RESTOCK_WARNING";
 
 type TActivityLog = {
   id: string;
   message: string;
-  activityType: string;
+  activityType: ActivityType;
   createdAt: string;
+};
+
+const activityTypeConfig: Record<
+  ActivityType,
+  { label: string; color: string }
+> = {
+  ORDER_PLACED: {
+    label: "Order Placed",
+    color: "bg-yellow-100 text-yellow-800",
+  },
+  ORDER_CONFIRMED: {
+    label: "Confirmed",
+    color: "bg-blue-100 text-blue-800",
+  },
+  ORDER_SHIPPED: {
+    label: "Shipped",
+    color: "bg-purple-100 text-purple-800",
+  },
+  ORDER_DELIVERED: {
+    label: "Delivered",
+    color: "bg-green-100 text-green-800",
+  },
+  ORDER_CANCELLED: {
+    label: "Cancelled",
+    color: "bg-red-100 text-red-800",
+  },
+  PRODUCT_ADDED: {
+    label: "Product Added",
+    color: "bg-emerald-100 text-emerald-800",
+  },
+  PRODUCT_UPDATED: {
+    label: "Updated",
+    color: "bg-orange-100 text-orange-800",
+  },
+  PRODUCT_DELETED: {
+    label: "Deleted",
+    color: "bg-rose-100 text-rose-800",
+  },
+  RESTOCK_PRODUCT: {
+    label: "Restocked",
+    color: "bg-indigo-100 text-indigo-800",
+  },
+  RESTOCK_WARNING: {
+    label: "Low Stock",
+    color: "bg-amber-100 text-amber-800",
+  },
 };
 
 type TMeta = {
@@ -96,9 +155,14 @@ const ActivityLogManagement = () => {
       header: "Type",
       cell: ({ row }) => {
         const type = row.original.activityType;
+        const config = activityTypeConfig[type];
+
         return (
-          <span className="inline-flex items-center px-3 py-1 rounded-full text-xs font-medium bg-primary/10 text-primary">
-            {type.replace("ORDER_", "").replace("_", " ")}
+          <span
+            className={`inline-flex items-center gap-2 px-3 py-1 rounded-full text-xs font-medium ${config?.color}`}
+          >
+            <span className="h-1.5 w-1.5 rounded-full bg-current" />
+            {config?.label}
           </span>
         );
       },
@@ -108,17 +172,21 @@ const ActivityLogManagement = () => {
       header: "Time",
       cell: ({ row }) => {
         const date = new Date(row.original.createdAt);
+
         return (
-          <div className="text-sm text-muted-foreground">
-            {date.toLocaleDateString("en-US", {
-              month: "short",
-              day: "numeric",
-            })}
-            <br />
-            {date.toLocaleTimeString("en-US", {
-              hour: "2-digit",
-              minute: "2-digit",
-            })}
+          <div className="text-sm">
+            <p className="font-medium text-gray-900">
+              {formatDistanceToNow(date, { addSuffix: true })}
+            </p>
+            <p className="text-xs text-muted-foreground">
+              {date.toLocaleString("en-US", {
+                month: "short",
+                day: "numeric",
+                year: "numeric",
+                hour: "2-digit",
+                minute: "2-digit",
+              })}
+            </p>
           </div>
         );
       },

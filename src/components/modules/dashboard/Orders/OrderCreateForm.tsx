@@ -96,7 +96,7 @@ const OrderCreateForm = () => {
 
   const handleAddItem = () => {
     const productId = form.getValues("items")[0]?.productId; // Temporary field for selection
-    const quantity = form.getValues("items")[0]?.quantity || 1;
+    const quantity = form.getValues("items")[0]?.quantity;
 
     if (!productId) {
       toast.error("Please select a product");
@@ -116,14 +116,8 @@ const OrderCreateForm = () => {
       (item) => item.productId === productId,
     );
     if (existingIndex >= 0) {
-      const newQty = orderItems[existingIndex].quantity + quantity;
-      if (newQty > product.stockQuantity) {
-        toast.error("Not enough stock");
-        return;
-      }
-      const updatedItems = [...orderItems];
-      updatedItems[existingIndex].quantity = newQty;
-      setOrderItems(updatedItems);
+      toast.error("Item already added");
+      return;
     } else {
       setOrderItems([
         ...orderItems,
@@ -245,8 +239,7 @@ const OrderCreateForm = () => {
                           <FormLabel>Quantity</FormLabel>
                           <Input
                             type="number"
-                            min="1"
-                            value={form.getValues("items")[0]?.quantity || 1}
+                            value={form.getValues("items")[0]?.quantity}
                             onChange={(e) => {
                               const current = form.getValues("items")[0] || {
                                 productId: "",
@@ -255,7 +248,7 @@ const OrderCreateForm = () => {
                               form.setValue("items", [
                                 {
                                   ...current,
-                                  quantity: parseInt(e.target.value) || 1,
+                                  quantity: parseInt(e.target.value),
                                 },
                               ]);
                             }}

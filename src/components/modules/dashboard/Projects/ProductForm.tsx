@@ -218,7 +218,7 @@ export default function ProductForm({
                 <FormLabel>Status</FormLabel>
                 <Select onValueChange={field.onChange} value={field.value}>
                   <FormControl>
-                    <SelectTrigger>
+                    <SelectTrigger disabled>
                       <SelectValue />
                     </SelectTrigger>
                   </FormControl>

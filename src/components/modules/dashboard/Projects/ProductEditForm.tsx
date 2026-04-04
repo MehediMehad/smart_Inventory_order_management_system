@@ -257,7 +257,7 @@ export default function ProductEditForm({ productId }: ProductEditFormProps) {
                 )}
               />
 
-              <FormField
+              {/* <FormField
                 control={form.control}
                 name="status"
                 render={({ field }) => (
@@ -279,7 +279,7 @@ export default function ProductEditForm({ productId }: ProductEditFormProps) {
                     <FormMessage />
                   </FormItem>
                 )}
-              />
+              /> */}
             </div>
 
             <Button

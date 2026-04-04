@@ -1,4 +1,5 @@
 "use client";
+
 import { Button } from "@/components/ui/button";
 import {
   Form,
@@ -27,15 +28,15 @@ export default function LoginForm() {
   const form = useForm({
     resolver: zodResolver(loginSchema),
     defaultValues: {
-      email: "admin@example.com",
-      password: "yourStrongPassword",
+      email: "",
+      password: "",
     },
   });
 
   const { setIsLoading } = useUser();
-
   const searchParams = useSearchParams();
   const [showPassword, setShowPassword] = useState(false);
+  const [isDemoLoading, setIsDemoLoading] = useState(false);
 
   const redirect = searchParams.get("redirectPath");
   const router = useRouter();
@@ -45,6 +46,7 @@ export default function LoginForm() {
     reset,
   } = form;
 
+  // Normal Login
   const onSubmit: SubmitHandler<FieldValues> = async (data) => {
     try {
       const res = await loginUser(data);
@@ -52,17 +54,45 @@ export default function LoginForm() {
       setIsLoading(true);
       if (res?.success) {
         reset();
-        toast.success(res?.message);
+        toast.success(res?.message || "Login successful");
         if (redirect) {
           router.push(redirect);
         } else {
           router.push("/");
         }
       } else {
-        toast.error(res?.message);
+        toast.error(res?.message || "Login failed");
       }
     } catch (err: any) {
       console.error(err);
+      toast.error("Something went wrong");
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
+  // Demo Login (Quick Login Button)
+  const handleDemoLogin = async () => {
+    setIsDemoLoading(true);
+
+    const demoData = {
+      email: "admin@example.com",
+      password: "yourStrongPassword",
+    };
+
+    try {
+      const res = await loginUser(demoData);
+
+      if (res?.success) {
+        toast.success("Demo login successful! Welcome back.");
+        router.push("/");
+      } else {
+        toast.error(res?.message || "Demo login failed");
+      }
+    } catch (error) {
+      toast.error("Demo login failed. Please try again.");
+    } finally {
+      setIsDemoLoading(false);
     }
   };
 
@@ -78,6 +108,7 @@ export default function LoginForm() {
           className="object-contain"
           quality={100}
         />
+
         {/* Title */}
         <h2 className="text-2xl font-bold text-gray-800 text-center">
           Welcome to Align <br />
@@ -89,44 +120,40 @@ export default function LoginForm() {
           Manage your application smarter and easier
         </p>
       </CardHeader>
-      <CardContent>
+
+      <CardContent className="p-6">
         <Form {...form}>
-          <form onSubmit={form.handleSubmit(onSubmit)}>
+          <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-5">
             <FormField
               control={form.control}
               name="email"
               render={({ field }) => (
-                <FormItem className="mb-2">
+                <FormItem>
                   <FormLabel>Email</FormLabel>
                   <FormControl>
-                    <Input
-                      className=""
-                      type="email"
-                      {...field}
-                      value={field.value}
-                    />
+                    <Input type="email" placeholder="Email" {...field} />
                   </FormControl>
                   <FormMessage />
                 </FormItem>
               )}
             />
+
             <FormField
               control={form.control}
               name="password"
               render={({ field }) => (
-                <FormItem className="relative mb-2">
+                <FormItem className="relative">
                   <FormLabel>Password</FormLabel>
                   <FormControl>
                     <Input
-                      className=""
                       type={showPassword ? "text" : "password"}
+                      placeholder="Password"
                       {...field}
-                      value={field.value}
                     />
                   </FormControl>
                   <button
                     type="button"
-                    className="absolute right-3 top-11 -translate-y-1/2 text-gray-400 hover:text-gray-600"
+                    className="absolute right-3 top-10 -translate-y-1/2 text-gray-400 hover:text-gray-600"
                     onClick={() => setShowPassword(!showPassword)}
                   >
                     {showPassword ? (
@@ -140,29 +167,29 @@ export default function LoginForm() {
               )}
             />
 
-            {/* <div className="flex justify-end mt-1">
-              <Link
-                href="/forgot-password"
-                className="text-sm font-medium text-primary hover:underline"
-              >
-                Forgot password?
-              </Link>
-            </div> */}
-
             <Button
-              disabled={isSubmitting ? true : false}
+              disabled={isSubmitting}
               type="submit"
-              className="mt-4 py-5 text-base w-full rounded-xl bg-primary hover:bg-primary/90"
+              className="w-full py-5 text-base rounded-xl"
             >
-              {isSubmitting ? "Logging...." : "Login"}
+              {isSubmitting ? "Logging in..." : "Login"}
             </Button>
           </form>
         </Form>
-        <p className="text-sm text-gray-600 text-center my-3">
-          <Link href="/forgot-password" className="text-primary">
-            Forgot your password?
-          </Link>
-        </p>
+
+        {/* Demo Login Button */}
+        <div className="mt-6">
+          <Button
+            variant="outline"
+            onClick={handleDemoLogin}
+            disabled={isDemoLoading}
+            className="w-full py-5 text-base rounded-xl border-dashed"
+          >
+            {isDemoLoading
+              ? "Logging in as Demo..."
+              : "Demo Login (Quick Access)"}
+          </Button>
+        </div>
       </CardContent>
     </Card>
   );

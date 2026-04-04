@@ -1,4 +1,5 @@
 
+export type TOrderStatus = "PENDING" | "CONFIRMED" | "SHIPPED" | "DELIVERED" | "CANCELLED";
 
 export type TOrder = {
     id: string;
@@ -7,7 +8,7 @@ export type TOrder = {
     address: string;
     contact: string;
     totalPrice: number;
-    status: "PENDING" | "CONFIRMED" | "SHIPPED" | "DELIVERED" | "CANCELLED";
+    status: TOrderStatus
     createdAt: string;
     items: TItem[];
 };

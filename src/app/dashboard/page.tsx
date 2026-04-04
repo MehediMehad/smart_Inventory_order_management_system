@@ -1,10 +1,12 @@
+import Dashboard from "@/components/modules/dashboard/Dashboard/Dashboard";
+
 export const dynamic = "force-dynamic";
 
 const DashboardHome = async () => {
   return (
-    <div className="">
-      <h1>Dashboard</h1>
-    </div>
+    <>
+      <Dashboard />
+    </>
   );
 };
 

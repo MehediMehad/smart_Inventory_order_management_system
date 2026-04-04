@@ -1,8 +1,10 @@
+import RestockManagement from "@/components/modules/dashboard/Restock/RestockManagement";
+
 const page = () => {
   return (
-    <div>
-      <h1>This is page component</h1>
-    </div>
+    <>
+      <RestockManagement />
+    </>
   );
 };
 
